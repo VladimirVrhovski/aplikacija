@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - main
-    tags: ["v*.*.*"]
   pull_request:
     branches:
       - main
@@ -80,8 +79,8 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
@@ -89,5 +88,6 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/student-grade-tracker:latest
-            ${{ secrets.DOCKER_USERNAME }}/student-grade-tracker:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/student-grade-tracker:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/student-grade-tracker:v${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/student-grade-tracker:v${{ github.ref_name }} 

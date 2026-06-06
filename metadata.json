@@ -1,6 +1,0 @@
-{
-  "name": "Student Grade Tracker",
-  "description": "A simple Node.js, Express, and EJS application to track student course grades, GPA, and total ECTS credits, demonstrating Docker containerization and CI/CD workflows.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

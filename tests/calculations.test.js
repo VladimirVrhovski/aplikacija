@@ -34,28 +34,24 @@ describe('calcGPA', () => {
     expect(calcGPA(exams)).toBe(8);
   });
 
-  test('calculates correct weighted average for multiple exams', () => {
+  test('calculates correct simple average for multiple exams', () => {
     // Math example:
-    // (8 * 6) + (9 * 4) = 48 + 36 = 84
-    // Total ECTS = 6 + 4 = 10
-    // Weighted GPA = 84 / 10 = 8.40
-    // Simple average would be (8 + 9) / 2 = 8.5, which is different
+    // (8 + 9) / 2 = 8.5
     const exams = [
       { grade: 8, ects: 6 },
       { grade: 9, ects: 4 }
     ];
-    expect(calcGPA(exams)).toBe(8.40);
+    expect(calcGPA(exams)).toBe(8.5);
   });
 
-  test('calculates GPA correctly with non-integer weights', () => {
-    // (7 * 5) + (10 * 3) = 35 + 30 = 65
-    // Total ECTS = 8
-    // Weighted GPA = 65 / 8 = 8.125 -> rounded to 8.13
+  test('calculates simple average correctly with decimals', () => {
+    // (8 + 9 + 9) / 3 = 26 / 3 = 8.666... -> rounded to 8.67
     const exams = [
-      { grade: 7, ects: 5 },
-      { grade: 10, ects: 3 }
+      { grade: 8, ects: 5 },
+      { grade: 9, ects: 3 },
+      { grade: 9, ects: 6 }
     ];
-    expect(calcGPA(exams)).toBe(8.13);
+    expect(calcGPA(exams)).toBe(8.67);
   });
 
   test('edge case: all exams have grade 10', () => {

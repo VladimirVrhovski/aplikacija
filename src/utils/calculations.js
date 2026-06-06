@@ -1,6 +1,6 @@
 /**
- * Calculates the weighted GPA of exams.
- * Weighted average = sum(grade * ects) / sum(ects)
+ * Calculates the simple average GPA of exams.
+ * Average = sum(grade) / count(exams)
  * Returns a number rounded to 2 decimal places, or null if exams is empty.
  * @param {Array} exams
  * @returns {number|null}
@@ -10,24 +10,23 @@ function calcGPA(exams) {
     return null;
   }
   
-  let totalGradeWeighted = 0;
-  let totalECTS = 0;
+  let totalGrade = 0;
+  let count = 0;
   
   for (const exam of exams) {
     const grade = parseFloat(exam.grade);
-    const ects = parseInt(exam.ects, 10);
     
-    if (!isNaN(grade) && !isNaN(ects) && ects > 0) {
-      totalGradeWeighted += grade * ects;
-      totalECTS += ects;
+    if (!isNaN(grade)) {
+      totalGrade += grade;
+      count++;
     }
   }
   
-  if (totalECTS === 0) {
+  if (count === 0) {
     return null;
   }
   
-  const gpa = totalGradeWeighted / totalECTS;
+  const gpa = totalGrade / count;
   return Math.round(gpa * 100) / 100;
 }
 

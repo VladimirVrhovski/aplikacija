@@ -1,0 +1,134 @@
+<%- include('layout/base', { header: true, title: 'Dashboard', user: user }) %>
+
+<div class="dashboard-wrapper" id="dashboard-container">
+  <div class="dashboard-header-block" style="margin-bottom: 2rem; margin-top: 1rem;">
+    <h1 class="dashboard-title" id="dashboard-heading">Aplikacija za praćenje Vašeg napretka</h1>
+    <p style="color: var(--text-muted); margin-top: -0.25rem;">Pratite svoj prosek i broj ESPB.</p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid" id="stats-section">
+    <div class="stat-card" id="stat-count-card">
+      <div class="stat-label">Položeni ispiti</div>
+      <div class="stat-value" id="stat-count-value"><%= stats.count %></div>
+    </div>
+    
+    <div class="stat-card" id="stat-ects-card">
+      <div class="stat-label">Ukupno ESPB</div>
+      <div class="stat-value accent" id="stat-ects-value"><%= stats.totalECTS %></div>
+    </div>
+    
+    <div class="stat-card" id="stat-gpa-card">
+      <div class="stat-label">Prosek ocena</div>
+      <div class="stat-value <%= stats.gpa === 'N/A' ? 'muted' : 'accent' %>" id="stat-gpa-value"><%= stats.gpa %></div>
+    </div>
+  </div>
+
+  <!-- Error Alerts for Exam Add Forms -->
+  <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
+    <div class="alert alert-danger" role="alert" id="exam-error-alert" style="margin-bottom: 1.5rem;">
+      <strong>Error:</strong> <%= error %>
+    </div>
+  <% } %>
+
+  <!-- Add Exam Card -->
+  <div class="form-card" id="add-exam-form-card">
+    <h2 class="form-title" id="add-exam-heading">Unesite polozeni ispit</h2>
+    <form action="/exams" method="POST" id="form-add-exam">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="subject">Naziv predmeta</label>
+          <input 
+            type="text" 
+            id="subject" 
+            name="subject" 
+            class="form-control" 
+            placeholder="e.g. Elektronsko poslovanje" 
+            required 
+            maxlength="100"
+            value="<%= typeof formData !== 'undefined' ? formData.subject : '' %>"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="grade">Ocena (6 - 10)</label>
+          <input 
+            type="number" 
+            id="grade" 
+            name="grade" 
+            class="form-control" 
+            placeholder="6-10" 
+            min="6" 
+            max="10" 
+            required
+            value="<%= typeof formData !== 'undefined' ? formData.grade : '' %>"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="ects">ESPB Bodovi</label>
+          <input 
+            type="number" 
+            id="ects" 
+            name="ects" 
+            class="form-control" 
+            placeholder="1-30" 
+            min="1" 
+            max="30" 
+            required
+            value="<%= typeof formData !== 'undefined' ? formData.ects : '' %>"
+          >
+        </div>
+      </div>
+      
+      <div style="margin-top: 1.25rem;">
+        <button type="submit" class="btn btn-primary" id="btn-add-exam-submit" style="width: auto; min-width: 150px;">Dodaj ispit</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Exam Data Display Section -->
+  <div class="exam-list-section" id="exam-list-container">
+    <h2 class="section-title" id="exam-list-heading">Moji polozeni ispiti</h2>
+    
+    <% if (!exams || exams.length === 0) { %>
+      <div class="empty-state" id="empty-exams-view">
+        <h3 id="empty-state-header">Nema polozenih ispita</h3>
+        <p>Unesite ocenu i broj ESPB bodova za polozeni ispit kako biste izracunali svoj prosek.</p>
+      </div>
+    <% } else { %>
+      <div class="table-responsive" id="exams-table-wrapper">
+        <table id="exams-table">
+          <thead>
+            <tr>
+              <th>Predmet</th>
+              <th style="width: 100px; text-align: center;">Ocena</th>
+              <th style="width: 100px; text-align: center;">ESPB</th>
+              <th style="width: 120px; text-align: center;">Datum</th>
+              <th style="width: 100px; text-align: center;">Akcije</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% exams.forEach(function(exam) { %>
+              <tr id="exam-row-<%= exam.id %>">
+                <td style="font-weight: 500;"><%= exam.subject %></td>
+                <td style="text-align: center; font-weight: 600;"><%= exam.grade %></td>
+                <td style="text-align: center;"><%= exam.ects %></td>
+                <td style="text-align: center; font-size: 0.8125rem; color: var(--text-muted);">
+                  <%= new Date(exam.addedAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) %>
+                </td>
+                <td style="text-align: center;">
+                  <form action="/exams/<%= exam.id %>/delete" method="POST" style="margin: 0; display: inline;" id="delete-form-<%= exam.id %>">
+                    <button type="submit" class="btn btn-danger" id="btn-delete-<%= exam.id %>" onclick="return confirm('Sigurni ste da zelite da obrisete ovaj ispit?');">Obriši</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('layout/base', { header: false }) %>

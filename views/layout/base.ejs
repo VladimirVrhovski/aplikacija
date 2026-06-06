@@ -1,0 +1,35 @@
+<% if (typeof header !== 'undefined' && header) { %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title + ' | Grade Tracker' : 'Grade Tracker' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="container">
+        <nav class="navbar" id="main-nav">
+          <a href="/" class="brand" id="nav-brand">Grade Tracker</a>
+          
+          <% if (typeof user !== 'undefined' && user) { %>
+            <div class="user-nav" id="user-nav-controls">
+              <span class="username-display" id="user-display">Zdravo, <%= user.username %></span>
+              <form action="/logout" method="POST" style="margin: 0;" id="logout-form">
+                <button type="submit" class="btn-logout" id="btn-submit-logout">Izloguj se</button>
+              </form>
+            </div>
+          <% } %>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container" id="main-content-area">
+<% } else { %>
+    </main>
+  </div>
+</body>
+</html>
+<% } %>

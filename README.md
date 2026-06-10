@@ -1,92 +1,107 @@
 # Student Grade Tracker
 
-A simple, self-contained Node.js web application designed to demonstrate Docker containerization and CI/CD automation using GitHub Actions.
+Jednostavna, samostalna Node.js web aplikacija dizajnirana da demonstrira Docker
+kontejnerizaciju i CI/CD automatizaciju korišćenjem GitHub Actions.
 
-This application provides a university course grade tracking dashboard where authenticated students can log completed exams, calculate GPA, and track accumulated ECTS credits.
+Aplikacija pruža dashboard za praćenje ocena položenih predmeta gde ulogovani
+studenti mogu da upisuju ocene položenih ispita, računaju prosek i prate ukupne ostvarene ESPB kredite.
 
 ---
 
-## Technical Stack
+## Tehnički Stack
 - **Runtime**: Node.js (v18+)
 - **Framework**: Express.js
 - **Templating**: EJS (Server-Side Rendered HTML)
 - **Authentication**: Session-based auth (`express-session` + `bcryptjs` password hashing)
-- **Database**: MySQL (fully parameterized async/await connection queries via `mysql2`)
-- **Testing**: Jest unit tests + Supertest integration tests
-- **Styling**: Minimalist, responsive plain CSS
+- **Database**: MySQL (potpuno parametrizovani async/await upiti putem `mysql2`)
+- **Testing**: Jest unit testovi + Supertest integracioni testovi
+- **Styling**: Minimalistički, responsivan plain CSS
 
 ---
 
-## Getting Started
+## Početak rada
 
-### 1. Prerequisites
+### 1. Preduslovi
 - Node.js (v18+)
 - npm (v9+)
-- A running MySQL instance (if running manually)
+- Pokrenuta MySQL instanca (za ručno pokretanje)
 
-### 2. Local Installation
-Clone this repository to your machine, then run:
+### 2. Lokalna instalacija
+Klonirajte ovaj repozitorijum na vaš računar, zatim pokrenite:
 ```bash
 npm install
 ```
 
-### 3. Setup MySQL Database Schema
-To initialize the MySQL database schema locally, run the `schema.sql` script against your database instance:
+### 3. Podešavanje MySQL Database šeme
+Da biste lokalno inicijalizovali MySQL database šemu, pokrenite `schema.sql` skriptu
+nad vašom database instancom:
 ```bash
 mysql -u root -p gradetracker < schema.sql
 ```
 
-### 4. Run Locally
-To boot the Express server:
+### 4. Lokalno pokretanje
+Za pokretanje Express servera:
 ```bash
 npm start
 ```
-The application will start on port `3000` (or defined in `PORT`). Open your browser and navigate to `http://localhost:3000`.
+Aplikacija će se pokrenuti na portu `3000` (ili na portu definisanom u `PORT`).
+Otvorite web pretraživač i navigirajte na `http://localhost:3000`.
 
-### 5. Running Tests
-To execute the complete Jest test suite covering unit calculations and health endpoint integrations:
+### 5. Pokretanje testova
+Za pokretanje kompletnog Jest test suite-a koji pokriva unit kalkulacije i health
+endpoint integracije:
 ```bash
 npm test
 ```
 
 ---
 
-## Docker Containerization and Compose
+## Docker kontejnerizacija i Compose
 
-The application includes a light, optimized Node.js Docker image and a full environment Docker Compose config for seamless local testing.
+Aplikacija uključuje lagan, optimizovan Node.js Docker image i kompletnu Docker Compose
+konfiguraciju za nesmetano lokalno testiranje.
 
-### Local Development using Docker Compose
-The easiest way to run the application with a fully integrated MySQL container is through Docker Compose:
+### Lokalni razvoj korišćenjem Docker Compose
+Najlakši način za pokretanje aplikacije sa potpuno integrisanim MySQL kontejnerom
+je kroz Docker Compose:
 ```bash
 docker compose up --build
 ```
-This command builds the application, boots the MySQL service container, automatically imports the database schema from `schema.sql`, and exposes the running application on port `3000`.
+Ova komanda build-uje aplikaciju, pokreće MySQL service kontejner, automatski importuje
+database šemu iz `schema.sql` i izlaže pokrenutu aplikaciju na portu `3000`.
 
 ---
 
-## Required Environment Variables
+## Potrebne environment varijable
 
-To configure connection credentials or session settings, define the following variables:
-* **`PORT`**: The server port (defaults to `3000`).
-* **`SESSION_SECRET`**: The secret used by `express-session` to sign the session identifier cookie.
-* **`DB_HOST`**: Host address of the database server (defaults to `db`).
-* **`DB_PORT`**: Port of the database server (defaults to `3306`).
-* **`DB_USER`**: Database username (defaults to `root`).
-* **`DB_PASSWORD`**: Database password (defaults to empty `""`).
-* **`DB_NAME`**: Database name (defaults to `gradetracker`).
+Za konfigurisanje kredencijala konekcije ili session podešavanja, definišite sledeće
+varijable:
+* **`PORT`**: Port servera (podrazumevano `3000`).
+* **`SESSION_SECRET`**: Secret koji koristi `express-session` za potpisivanje session
+  identifier cookie-ja.
+* **`DB_HOST`**: Host adresa database servera (podrazumevano `db`).
+* **`DB_PORT`**: Port database servera (podrazumevano `3306`).
+* **`DB_USER`**: Database korisničko ime (podrazumevano `root`).
+* **`DB_PASSWORD`**: Database lozinka (podrazumevano prazno `""`).
+* **`DB_NAME`**: Naziv database-a (podrazumevano `gradetracker`).
 
 ---
 
-## CI/CD Pipeline & GitHub Secrets
+## CI/CD Pipeline i GitHub Secrets
 
-An automated GitHub Actions workflow is specified in `.github/workflows/ci.yml`. It:
-1. Provisions temporary MySQL service containers, applies schema definitions, and runs tests automatically on all pull requests and direct pushes to `main`.
-2. Automatically builds and pushes a tagged Docker image to Docker Hub whenever changes are merged into `main`.
+Automatizovani GitHub Actions workflow je definisan u `.github/workflows/ci.yml`. On:
+1. Priprema privremene MySQL service kontejnere, primenjuje schema definicije i
+   automatski pokreće testove na svim pull request-ovima i direktnim push-ovima na `main`.
+2. Automatski build-uje i push-uje tagovan Docker image na Docker Hub svaki put kada
+   se izmene merguju u `main`.
 
-No new GitHub secrets are required for database connectivity in CI (it uses hardcoded test credentials only).
+Za konekciju sa bazom u CI nisu potrebni novi GitHub secrets (koriste se samo
+hardcoded test kredencijali).
 
-### Required Docker Hub GitHub Secrets (unchanged)
-To utilize the build-and-push job, configure the following secrets inside your GitHub Repository under **Settings > Secrets and variables > Actions**:
+### Potrebni Docker Hub GitHub Secrets (nepromenjeni)
+Da biste koristili build-and-push job, konfigurišite sledeće secrets unutar vašeg
+GitHub repozitorijuma pod **Settings > Secrets and variables > Actions**:
 
-1. **`DOCKER_USERNAME`**: Your Docker Hub Username.
-2. **`DOCKER_TOKEN`**: Your Docker Hub Access Token (generate this in Docker Hub under Account Settings > Security).
+1. **`DOCKER_USERNAME`**: Vaše Docker Hub korisničko ime.
+2. **`DOCKER_TOKEN`**: Vaš Docker Hub Access Token (generišite ga na Docker Hub-u
+   pod Account Settings > Security).

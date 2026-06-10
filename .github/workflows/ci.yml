@@ -1,11 +1,10 @@
-# Required secrets: DOCKER_USERNAME, DOCKER_TOKEN (Docker Hub access token)
-
 name: CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    tags:
+      - 'v*'
   pull_request:
     branches:
       - main
@@ -16,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      mysql:
+      db:
         image: mysql:8
         env:
           MYSQL_ROOT_PASSWORD: rootpassword
@@ -32,7 +31,7 @@ jobs:
           --health-retries=5
 
     env:
-      DB_HOST: 127.0.0.1
+      DB_HOST: db
       DB_PORT: 3306
       DB_USER: appuser
       DB_PASSWORD: apppassword
@@ -56,8 +55,11 @@ jobs:
             npm install
           fi
 
+      - name: Map database host to localhost
+        run: echo "127.0.0.1 db" | sudo tee -a /etc/hosts
+
       - name: Initialize database schema
-        run: mysql -h 127.0.0.1 -P 3306 -u appuser -papppassword gradetracker < schema.sql
+        run: mysql -h db -P 3306 -u appuser -papppassword gradetracker < schema.sql
 
       - name: Run Jest Test Suite
         run: npm test
@@ -66,8 +68,7 @@ jobs:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
     needs: test
-    # Ensure it only builds and pushes on direct pushes to the main branch
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
 
     steps:
       - name: Checkout Code
@@ -81,13 +82,20 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Određivanje Docker tagova
+        id: tags
+        run: |
+          TAGS="${{ secrets.DOCKERHUB_USERNAME }}/student-grade-tracker:latest"
+          TAGS="$TAGS,${{ secrets.DOCKERHUB_USERNAME }}/student-grade-tracker:${{ github.sha }}"
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            TAGS="$TAGS,${{ secrets.DOCKERHUB_USERNAME }}/student-grade-tracker:${{ github.ref_name }}"
+          fi
+          echo "tags=$TAGS" >> $GITHUB_OUTPUT
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/student-grade-tracker:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/student-grade-tracker:v${{ github.sha }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/student-grade-tracker:v${{ github.ref_name }} 
+          tags: ${{ steps.tags.outputs.tags }}

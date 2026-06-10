@@ -1,10 +1,3 @@
-/**
- * Calculates the simple average GPA of exams.
- * Average = sum(grade) / count(exams)
- * Returns a number rounded to 2 decimal places, or null if exams is empty.
- * @param {Array} exams
- * @returns {number|null}
- */
 function calcGPA(exams) {
   if (!exams || exams.length === 0) {
     return null;
@@ -30,12 +23,6 @@ function calcGPA(exams) {
   return Math.round(gpa * 100) / 100;
 }
 
-/**
- * Calculates the total ECTS credits of exams.
- * Returns an integer.
- * @param {Array} exams
- * @returns {number}
- */
 function calcTotalECTS(exams) {
   if (!exams || exams.length === 0) {
     return 0;

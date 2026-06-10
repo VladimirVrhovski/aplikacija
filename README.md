@@ -69,7 +69,7 @@ This command builds the application, boots the MySQL service container, automati
 To configure connection credentials or session settings, define the following variables:
 * **`PORT`**: The server port (defaults to `3000`).
 * **`SESSION_SECRET`**: The secret used by `express-session` to sign the session identifier cookie.
-* **`DB_HOST`**: Host address of the database server (defaults to `localhost`).
+* **`DB_HOST`**: Host address of the database server (defaults to `db`).
 * **`DB_PORT`**: Port of the database server (defaults to `3306`).
 * **`DB_USER`**: Database username (defaults to `root`).
 * **`DB_PASSWORD`**: Database password (defaults to empty `""`).

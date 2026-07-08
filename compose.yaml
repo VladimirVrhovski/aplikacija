@@ -1,3 +1,4 @@
+name: grade-tracker
 services:
   app:
     build: .
